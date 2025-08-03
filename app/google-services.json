@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "399335766906",
+    "project_id": "firstfirebaseproject-fda11",
+    "storage_bucket": "firstfirebaseproject-fda11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399335766906:android:7ce72d578c29fab57a34c3",
+        "android_client_info": {
+          "package_name": "com.example.chatroomapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmSwyUbE8vPihBEkAK3MRAsL50N9f35nM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
