@@ -5,7 +5,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import com.example.chatroomapp.data.Result
 
 class MessageRepository(private val firestore: FirebaseFirestore) {
 
@@ -17,15 +16,28 @@ class MessageRepository(private val firestore: FirebaseFirestore) {
         Result.Error(e)
     }
 
+    suspend fun deleteMessage(roomId: String, messageId: String): Result<Unit> = try {
+        firestore.collection("rooms").document(roomId)
+            .collection("messages").document(messageId).delete().await()
+        Result.Success(Unit)
+    } catch (e: Exception) {
+        Result.Error(e)
+    }
+
     fun getChatMessages(roomId: String): Flow<List<Message>> = callbackFlow {
         val subscription = firestore.collection("rooms").document(roomId)
             .collection("messages")
             .orderBy("timestamp")
-            .addSnapshotListener { querySnapshot, _ ->
-                querySnapshot?.let {
-                    trySend(it.documents.map { doc ->
-                        doc.toObject(Message::class.java)!!.copy()
-                    }).isSuccess
+            .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                querySnapshot?.let { snapshot ->
+                    val messages = snapshot.documents.mapNotNull { doc ->
+                        doc.toObject(Message::class.java)?.copy(id = doc.id)
+                    }
+                    trySend(messages).isSuccess
                 }
             }
 
